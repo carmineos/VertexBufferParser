@@ -5,6 +5,8 @@ VisualStudioVersion = 17.8.34227.203
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VertexBufferParser", "VertexBufferParser\VertexBufferParser.csproj", "{9326FBE6-49B4-495F-BE44-2B232DFB8215}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VertexBufferParser.Benchmarks", "VertexBufferParser.Benchmarks\VertexBufferParser.Benchmarks.csproj", "{92DB1C15-2571-447D-A0FF-33D8E243D725}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{9326FBE6-49B4-495F-BE44-2B232DFB8215}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9326FBE6-49B4-495F-BE44-2B232DFB8215}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9326FBE6-49B4-495F-BE44-2B232DFB8215}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92DB1C15-2571-447D-A0FF-33D8E243D725}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92DB1C15-2571-447D-A0FF-33D8E243D725}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92DB1C15-2571-447D-A0FF-33D8E243D725}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92DB1C15-2571-447D-A0FF-33D8E243D725}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
