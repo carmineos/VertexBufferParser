@@ -4,9 +4,9 @@ namespace VertexBufferParser;
 
 public class VertexBufferParser
 {
-    public SemanticDescriptor[] SemanticDescriptors;
+    public ElementDescriptor[] SemanticDescriptors;
 
-    public VertexBufferParser(SemanticDescriptor[] semanticDescriptors)
+    public VertexBufferParser(ElementDescriptor[] semanticDescriptors)
     {
         SemanticDescriptors = semanticDescriptors;
     }
@@ -39,19 +39,19 @@ public class VertexBufferParser
         {
             var parser = GetVertexComponentParser(descriptor);
 
-            (byteIndex, lineIndex) = parser.ParseVertexComponent(vertex, byteIndex, descriptor.Components, line, lineIndex, null);
+            (byteIndex, lineIndex) = parser.ParseElement(vertex, byteIndex, descriptor.Components, line, lineIndex, null);
         }
     }
 
-    public static IVertexComponentParser GetVertexComponentParser(SemanticDescriptor semanticDescriptor)
+    public static IElementParser GetVertexComponentParser(ElementDescriptor semanticDescriptor)
     {
         return semanticDescriptor.Type switch
         {
-            "byte" => VertexComponentParser<byte>.Singleton,
-            "short" => VertexComponentParser<short>.Singleton,
-            "half" => VertexComponentParser<Half>.Singleton,
-            "float" => VertexComponentParser<float>.Singleton,
-            "int" => VertexComponentParser<int>.Singleton,
+            "byte" => ElementParser<byte>.Singleton,
+            "short" => ElementParser<short>.Singleton,
+            "half" => ElementParser<Half>.Singleton,
+            "float" => ElementParser<float>.Singleton,
+            "int" => ElementParser<int>.Singleton,
             _ => throw new Exception(),
         };
     }

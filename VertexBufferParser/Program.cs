@@ -1,65 +1,63 @@
-﻿using System;
-using System.Numerics;
+﻿using System.Numerics;
 using System.Runtime.InteropServices;
+using System.Xml.Serialization;
 using VertexBufferParser;
 
 var xml =
     """
     <VertexBuffer>
       <VertexLayout>
-        <Semantics>   
-          <Semantic name="Position" type="float" components="3" />
-          <Semantic name="Color" type="byte" components="4" />
-        </Semantics>
+        <Elements>   
+          <Element semantic="Position" type="float" components="3" />
+          <Element semantic="Normals" type="float" components="3" />
+          <Element semantic="Color0" type="byte" components="4" />
+          <Element semantic="Color1" type="byte" components="4" />
+          <Element semantic="Texcoords0" type="float" components="2" />
+          <Element semantic="Texcoords1" type="float" components="2" />
+        </Elements>
       </VertexLayout>
      <Vertices>
-        0.1 0.2 0.3 255 255 255 255
-        0.4 0.5 0.6 255 255 255 255
+        0.1 0.2 0.3    255 255 255 255    128 128 128 128    0.5 0.5    0.5 0.5
+        0.4 0.5 0.6    255 255 255 255    128 128 128 128    0.5 0.5    0.5 0.5
+        ...
+        ...
      </Vertices>
-    <VertexBuffer>
+    </VertexBuffer>
     """;
 
-int vertexStride = 28;
+var serializer = new XmlSerializer(typeof(VertexBuffer));
+using var stream = new StringReader(xml);
+VertexBuffer vertexBuffer = (VertexBuffer)serializer.Deserialize(stream)!;
+
+int vertexStride = 48;
 int verticesCount = 1_000_000;
+vertexBuffer.Vertices = new byte[vertexStride * verticesCount];
 
 var verticesString = string.Join(Environment.NewLine, Enumerable
     .Range(0, verticesCount)
-    .Select(c => "      0.1 0.2     0.3 1 1 1        255 255    255 255     ")); // bad formatted lines (spaces/tabs) aren't a problem
+    .Select(c => "      0.1 0.2     0.3 1 1 1        255 255    255 255         128 128 128 128    0.5 0.5    0.5 0.5")); // bad formatted lines (spaces/tabs) aren't a problem
 
-var vertexBuffer = new VertexBuffer()
-{
-    VertexLayout = new VertexLayout()
-    {
-        SemanticDescriptors =
-        [
-            new SemanticDescriptor() { Name = "Position", Components = 3, Type = "float" },
-            new SemanticDescriptor() { Name = "Normals", Components = 3, Type = "float" },
-            new SemanticDescriptor() { Name = "Color", Components = 4, Type = "byte" },
-        ]
-    },
-    Vertices = new byte[vertexStride * verticesCount],
-};
-
-var vertexBufferParser = new VertexBufferParser.VertexBufferParser(vertexBuffer.VertexLayout.SemanticDescriptors);
+var vertexBufferParser = new VertexBufferParser.VertexBufferParser(vertexBuffer.VertexLayout.ElementDescriptors);
 vertexBufferParser.Parse(vertexBuffer.Vertices, vertexStride, verticesString);
 
 // Print expected values
-//var test = MemoryMarshal.Cast<byte, Vertex>(vertexBuffer.Vertices);
-//for (int i = 0; i < test.Length; i++)
-//{
-//    Console.WriteLine($"{i}: {test[i]}");
-//}
+//Dump();
 
-public struct Vertex
+void Dump()
 {
-    public Vector3 Position { get; set; }
-
-    public Vector3 Normals { get; set; }
-
-    public uint Color { get; set; }
-
-    public override string ToString()
+    var dump = MemoryMarshal.Cast<byte, Vertex>(vertexBuffer.Vertices);
+    for (int i = 0; i < dump.Length; i++)
     {
-        return Position.ToString() + "; " + Normals.ToString() + "; " + Color.ToString();
+        Console.WriteLine($"{i}: {dump[i]}");
     }
 }
+
+public readonly record struct Vertex(
+    Vector3 Position,
+    Vector3 Normals,
+    Color Color0,
+    Color Color1,
+    Vector2 Texcoords0,
+    Vector2 Texcoords1);
+
+public readonly record struct Color(byte R, byte G, byte B, byte A);

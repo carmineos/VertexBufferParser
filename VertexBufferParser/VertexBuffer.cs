@@ -2,20 +2,32 @@
 
 namespace VertexBufferParser;
 
+[Serializable]
 public class VertexBuffer
 {
     public VertexLayout VertexLayout { get; set; }
+
+    [XmlIgnore]
     public byte[] Vertices { get; set; }
 }
 
+[Serializable]
 public class VertexLayout
 {
-    public SemanticDescriptor[] SemanticDescriptors { get; set; }
+    [XmlArray("Elements")]
+    [XmlArrayItem("Element")]
+    public ElementDescriptor[] ElementDescriptors { get; set; }
 }
 
-public struct SemanticDescriptor
+[Serializable]
+public struct ElementDescriptor
 {
-    public string Name { get; set; }
+    [XmlAttribute(AttributeName = "semantic")]
+    public string Semantic { get; set; }
+
+    [XmlAttribute(AttributeName = "type")]
     public string Type { get; set; }
+
+    [XmlAttribute(AttributeName = "components")]
     public int Components { get; set; }
 }
