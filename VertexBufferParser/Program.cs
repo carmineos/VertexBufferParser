@@ -1,0 +1,66 @@
+﻿using System.Numerics;
+using System.Runtime.InteropServices;
+
+var xml =
+    """
+    <VertexBuffer>
+      <VertexLayout>
+        <Semantics>   
+          <Semantic name="Position" type="float" components="3" />
+          <Semantic name="Color" type="byte" components="4" />
+        </Semantics>
+      </VertexLayout>
+     <Vertices>
+        0.1 0.2 0.3 255 255 255 255
+        0.4 0.5 0.6 255 255 255 255
+     </Vertices>
+    <VertexBuffer>
+    """;
+
+
+var vertexBuffer = new VertexBuffer()
+{
+    VertexLayout = new VertexLayout()
+    {
+        SemanticDescriptors = new List<SemanticDescriptor>
+        {
+            new SemanticDescriptor() { Name = "Position", Components = 3, Type = "float" },
+            new SemanticDescriptor() { Name = "Normals", Components = 3, Type = "float" },
+            new SemanticDescriptor() { Name = "Color", Components = 4, Type = "byte" },
+        }
+    }
+};
+
+int vertexStride = 28;
+int verticesCount = 1000;
+
+var verticesString = string.Join(Environment.NewLine, Enumerable
+    .Range(0, verticesCount)
+    .Select(c => "      0.1 0.2     0.3 1 1 1        255 255    255 255     ")); // bad formatted lines (spaces/tabs) aren't a problem
+
+var vertexBufferParser = new VertexBufferParser();
+vertexBufferParser.SemanticDescriptors = vertexBuffer.VertexLayout.SemanticDescriptors.ToArray();
+vertexBufferParser.Buffer = new byte[vertexStride * verticesCount]; 
+
+vertexBufferParser.ParseVertices(vertexBufferParser.Buffer, vertexStride, verticesString);
+
+// Print expected values
+var test = MemoryMarshal.Cast<byte, Vertex>(vertexBufferParser.Buffer);
+for (int i = 0; i < test.Length; i++)
+{
+    Console.WriteLine($"{i}: {test[i]}");
+}
+
+public struct Vertex
+{
+    public Vector3 Position { get; set; }
+
+    public Vector3 Normals { get; set; }
+
+    public uint Color { get; set; }
+
+    public override string ToString()
+    {
+        return Position.ToString() + "; " + Normals.ToString() + "; " + Color.ToString();
+    }
+}
