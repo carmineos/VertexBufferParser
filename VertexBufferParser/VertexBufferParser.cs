@@ -39,7 +39,7 @@ public class VertexBufferParser
         {
             var parser = GetVertexComponentParser(descriptor);
 
-            (byteIndex, lineIndex) = parser.ParseElement(vertex, byteIndex, descriptor.Components, line, lineIndex, null);
+            (byteIndex, lineIndex) = parser.ParseElement(vertex, byteIndex, line, lineIndex, null);
         }
     }
 
@@ -47,11 +47,10 @@ public class VertexBufferParser
     {
         return semanticDescriptor.Type switch
         {
-            "byte" => ElementParser<byte>.Singleton,
-            "short" => ElementParser<short>.Singleton,
-            "half" => ElementParser<Half>.Singleton,
-            "float" => ElementParser<float>.Singleton,
-            "int" => ElementParser<int>.Singleton,
+            "Float2" => Float2ElementParser.Singleton,
+            "Float3" => Float3ElementParser.Singleton,
+            "Dec3N" => Dec3NElementParser.Singleton,
+            "Colour" => ColourElementParser.Singleton,
             _ => throw new Exception(),
         };
     }

@@ -27,7 +27,4 @@ public struct ElementDescriptor
 
     [XmlAttribute(AttributeName = "type")]
     public string Type { get; set; }
-
-    [XmlAttribute(AttributeName = "components")]
-    public int Components { get; set; }
 }
