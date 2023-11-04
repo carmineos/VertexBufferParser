@@ -1,5 +1,7 @@
 ﻿using System.Xml.Serialization;
 
+namespace VertexBufferParser;
+
 public class VertexBuffer
 {
     public VertexLayout VertexLayout { get; set; }
@@ -8,9 +10,7 @@ public class VertexBuffer
 
 public class VertexLayout
 {
-    [XmlArray]
-    [XmlArrayItem(ElementName = "Semantic", Type = typeof(SemanticDescriptor))]
-    public List<SemanticDescriptor> SemanticDescriptors { get; set; }
+    public SemanticDescriptor[] SemanticDescriptors { get; set; }
 }
 
 public class SemanticDescriptor

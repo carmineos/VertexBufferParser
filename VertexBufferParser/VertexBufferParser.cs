@@ -1,11 +1,13 @@
-﻿using System.Diagnostics;
+﻿using System.Buffers;
+using System.Diagnostics;
+
+namespace VertexBufferParser;
 
 public class VertexBufferParser
 {
     public byte[] Buffer;
 
     public SemanticDescriptor[] SemanticDescriptors;
-
 
     public void ParseVertices(Span<byte> vertexBuffer, int vertexStride, ReadOnlySpan<char> verticesString)
     {

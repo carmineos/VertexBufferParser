@@ -2,17 +2,19 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
+namespace VertexBufferParser;
+
 public abstract class VertexComponentParser
 {
     public static VertexComponentParser GetVertexComponentParser(SemanticDescriptor semanticDescriptor)
     {
         return semanticDescriptor.Type switch
         {
-            "byte" => new VertexComponentParser<byte>(),
-            "short" => new VertexComponentParser<short>(),
-            "half" => new VertexComponentParser<Half>(),
-            "float" => new VertexComponentParser<float>(),
-            "int" => new VertexComponentParser<int>(),
+            "byte" => VertexComponentParser<byte>.Singleton,
+            "short" => VertexComponentParser<short>.Singleton,
+            "half" => VertexComponentParser<Half>.Singleton,
+            "float" => VertexComponentParser<float>.Singleton,
+            "int" => VertexComponentParser<int>.Singleton,
             _ => throw new Exception(),
         };
     }
@@ -22,7 +24,7 @@ public abstract class VertexComponentParser
 
 public class VertexComponentParser<T> : VertexComponentParser where T : unmanaged, ISpanParsable<T>
 {
-    public int ComponentSize => Unsafe.SizeOf<T>();
+    public static VertexComponentParser<T> Singleton = new VertexComponentParser<T>();
 
     public override (int, int) ParseVertexComponent(Span<byte> vertex, int vertexComponentStartIndex, int itemsToRead, ReadOnlySpan<char> line, int lineStartIndex = 0, IFormatProvider? formatProvider = null)
     {
