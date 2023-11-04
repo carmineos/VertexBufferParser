@@ -9,6 +9,9 @@ public class VertexBuffer
 
     [XmlIgnore]
     public byte[] Vertices { get; set; }
+
+    [XmlElement(ElementName = "Vertices")]
+    public string VerticesText { get; set; }
 }
 
 [Serializable]

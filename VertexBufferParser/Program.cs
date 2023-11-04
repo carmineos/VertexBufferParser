@@ -3,8 +3,11 @@ using System.Runtime.InteropServices;
 using System.Xml.Serialization;
 using VertexBufferParser;
 
+int vertexStride = 40;
+int verticesCount = 1_000_000;
+
 var xml =
-    """
+    $"""
     <VertexBuffer>
       <VertexLayout>
         <Elements>   
@@ -17,10 +20,7 @@ var xml =
         </Elements>
       </VertexLayout>
      <Vertices>
-        0.1 0.2 0.3    1 1 1    255 255 255 255    128 128 128 128    0.5 0.5    0.5 0.5
-        0.4 0.5 0.6    1 1 1    255 255 255 255    128 128 128 128    0.5 0.5    0.5 0.5
-        ...
-        ...
+        {string.Join(Environment.NewLine, Enumerable.Range(0, verticesCount).Select(c => "0.4 0.5 0.6    1 1 1    255 255 255 255    128 128 128 128    0.5 0.5    0.5 0.5"))}
      </Vertices>
     </VertexBuffer>
     """;
@@ -28,17 +28,10 @@ var xml =
 var serializer = new XmlSerializer(typeof(VertexBuffer));
 using var stream = new StringReader(xml);
 VertexBuffer vertexBuffer = (VertexBuffer)serializer.Deserialize(stream)!;
-
-int vertexStride = 40;
-int verticesCount = 1_000_000;
 vertexBuffer.Vertices = new byte[vertexStride * verticesCount];
 
-var verticesString = string.Join(Environment.NewLine, Enumerable
-    .Range(0, verticesCount)
-    .Select(c => "      0.1 -0.2     0.3 -0.7 0.5 1.0        255 255    255 255         128 128 128 128    0.5 0.5    0.5 0.5")); // bad formatted lines (spaces/tabs) aren't a problem
-
 var vertexBufferParser = new VertexBufferParser.VertexBufferParser(vertexBuffer.VertexLayout.ElementDescriptors);
-vertexBufferParser.Parse(vertexBuffer.Vertices, vertexStride, verticesString);
+vertexBufferParser.Parse(vertexBuffer.Vertices, vertexStride, vertexBuffer.VerticesText);
 
 // Print expected values
 Dump();
