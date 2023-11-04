@@ -20,6 +20,10 @@ public class VertexBufferParser
 
         foreach (var line in lines)
         {
+            // This should only happen in the first and last lines, in case of custom indentation
+            if (line.IsWhiteSpace())
+                continue;
+
             // read the vertex on each line
             var vertexChunk = vertexBuffer.Slice(lineCount * vertexStride, vertexStride);
 
