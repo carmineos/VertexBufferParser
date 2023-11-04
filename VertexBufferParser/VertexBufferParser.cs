@@ -1,15 +1,17 @@
-﻿using System.Buffers;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 namespace VertexBufferParser;
 
 public class VertexBufferParser
 {
-    public byte[] Buffer;
-
     public SemanticDescriptor[] SemanticDescriptors;
 
-    public void ParseVertices(Span<byte> vertexBuffer, int vertexStride, ReadOnlySpan<char> verticesString)
+    public VertexBufferParser(SemanticDescriptor[] semanticDescriptors)
+    {
+        SemanticDescriptors = semanticDescriptors;
+    }
+
+    public void Parse(Span<byte> vertexBuffer, int vertexStride, ReadOnlySpan<char> verticesString)
     {
         var verticesCount = vertexBuffer.Length / vertexStride;
 
@@ -28,16 +30,29 @@ public class VertexBufferParser
         Debug.Assert(verticesCount == lineCount);
     }
 
-    public void ParseVertex(Span<byte> vertex, ReadOnlySpan<char> line)
+    private void ParseVertex(Span<byte> vertex, ReadOnlySpan<char> line)
     {
         var byteIndex = 0;
         var lineIndex = 0;
 
         foreach (var descriptor in SemanticDescriptors)
         {
-            var parser = VertexComponentParser.GetVertexComponentParser(descriptor);
+            var parser = GetVertexComponentParser(descriptor);
 
             (byteIndex, lineIndex) = parser.ParseVertexComponent(vertex, byteIndex, descriptor.Components, line, lineIndex, null);
         }
+    }
+
+    public static IVertexComponentParser GetVertexComponentParser(SemanticDescriptor semanticDescriptor)
+    {
+        return semanticDescriptor.Type switch
+        {
+            "byte" => VertexComponentParser<byte>.Singleton,
+            "short" => VertexComponentParser<short>.Singleton,
+            "half" => VertexComponentParser<Half>.Singleton,
+            "float" => VertexComponentParser<float>.Singleton,
+            "int" => VertexComponentParser<int>.Singleton,
+            _ => throw new Exception(),
+        };
     }
 }

@@ -1,4 +1,6 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
+using System.Runtime.InteropServices;
 using VertexBufferParser;
 
 var xml =
@@ -17,6 +19,12 @@ var xml =
     <VertexBuffer>
     """;
 
+int vertexStride = 28;
+int verticesCount = 1_000_000;
+
+var verticesString = string.Join(Environment.NewLine, Enumerable
+    .Range(0, verticesCount)
+    .Select(c => "      0.1 0.2     0.3 1 1 1        255 255    255 255     ")); // bad formatted lines (spaces/tabs) aren't a problem
 
 var vertexBuffer = new VertexBuffer()
 {
@@ -28,24 +36,15 @@ var vertexBuffer = new VertexBuffer()
             new SemanticDescriptor() { Name = "Normals", Components = 3, Type = "float" },
             new SemanticDescriptor() { Name = "Color", Components = 4, Type = "byte" },
         ]
-    }
+    },
+    Vertices = new byte[vertexStride * verticesCount],
 };
 
-int vertexStride = 28;
-int verticesCount = 1_000_000;
-
-var verticesString = string.Join(Environment.NewLine, Enumerable
-    .Range(0, verticesCount)
-    .Select(c => "      0.1 0.2     0.3 1 1 1        255 255    255 255     ")); // bad formatted lines (spaces/tabs) aren't a problem
-
-var vertexBufferParser = new VertexBufferParser.VertexBufferParser();
-vertexBufferParser.SemanticDescriptors = vertexBuffer.VertexLayout.SemanticDescriptors;
-vertexBufferParser.Buffer = new byte[vertexStride * verticesCount]; 
-
-vertexBufferParser.ParseVertices(vertexBufferParser.Buffer, vertexStride, verticesString);
+var vertexBufferParser = new VertexBufferParser.VertexBufferParser(vertexBuffer.VertexLayout.SemanticDescriptors);
+vertexBufferParser.Parse(vertexBuffer.Vertices, vertexStride, verticesString);
 
 // Print expected values
-//var test = MemoryMarshal.Cast<byte, Vertex>(vertexBufferParser.Buffer);
+//var test = MemoryMarshal.Cast<byte, Vertex>(vertexBuffer.Vertices);
 //for (int i = 0; i < test.Length; i++)
 //{
 //    Console.WriteLine($"{i}: {test[i]}");

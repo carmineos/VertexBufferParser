@@ -29,18 +29,18 @@ public class ParserBenchmarks
             }
         };
 
+        VertexBuffer.Vertices = new byte[vertexStride * verticesCount];
+
         verticesString = string.Join(Environment.NewLine, Enumerable
             .Range(0, verticesCount)
             .Select(c => "      0.1 0.2     0.3 1 1 1        255 255    255 255     ")); // bad formatted lines (spaces/tabs) aren't a problem
 
-        VertexBufferParser = new VertexBufferParser();
-        VertexBufferParser.SemanticDescriptors = VertexBuffer.VertexLayout.SemanticDescriptors.ToArray();
-        VertexBufferParser.Buffer = new byte[vertexStride * verticesCount];
+        VertexBufferParser = new VertexBufferParser(VertexBuffer.VertexLayout.SemanticDescriptors);
     }
 
     [Benchmark]
     public void Parse()
     {
-        VertexBufferParser.ParseVertices(VertexBufferParser.Buffer, vertexStride, verticesString);
+        VertexBufferParser.Parse(VertexBuffer.Vertices, vertexStride, verticesString);
     }
 }

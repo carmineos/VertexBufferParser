@@ -13,7 +13,7 @@ public class VertexLayout
     public SemanticDescriptor[] SemanticDescriptors { get; set; }
 }
 
-public class SemanticDescriptor
+public struct SemanticDescriptor
 {
     public string Name { get; set; }
     public string Type { get; set; }

@@ -4,29 +4,16 @@ using System.Runtime.InteropServices;
 
 namespace VertexBufferParser;
 
-public abstract class VertexComponentParser
+public interface IVertexComponentParser
 {
-    public static VertexComponentParser GetVertexComponentParser(SemanticDescriptor semanticDescriptor)
-    {
-        return semanticDescriptor.Type switch
-        {
-            "byte" => VertexComponentParser<byte>.Singleton,
-            "short" => VertexComponentParser<short>.Singleton,
-            "half" => VertexComponentParser<Half>.Singleton,
-            "float" => VertexComponentParser<float>.Singleton,
-            "int" => VertexComponentParser<int>.Singleton,
-            _ => throw new Exception(),
-        };
-    }
-
-    public abstract (int,int) ParseVertexComponent(Span<byte> vertex, int vertexIndex, int itemsCount, ReadOnlySpan<char> line, int lineStart = 0, IFormatProvider? formatProvider = null);
+    public (int,int) ParseVertexComponent(Span<byte> vertex, int vertexIndex, int itemsCount, ReadOnlySpan<char> line, int lineStart = 0, IFormatProvider? formatProvider = null);
 }
 
-public class VertexComponentParser<T> : VertexComponentParser where T : unmanaged, ISpanParsable<T>
+public class VertexComponentParser<T> : IVertexComponentParser where T : unmanaged, ISpanParsable<T>
 {
     public static VertexComponentParser<T> Singleton = new VertexComponentParser<T>();
 
-    public override (int, int) ParseVertexComponent(Span<byte> vertex, int vertexComponentStartIndex, int itemsToRead, ReadOnlySpan<char> line, int lineStartIndex = 0, IFormatProvider? formatProvider = null)
+    public (int, int) ParseVertexComponent(Span<byte> vertex, int vertexComponentStartIndex, int itemsToRead, ReadOnlySpan<char> line, int lineStartIndex = 0, IFormatProvider? formatProvider = null)
     {
         // Number of items already read
         int itemsRead = 0;
