@@ -95,20 +95,6 @@ public class ElementParser<T> : IElementParser where T : unmanaged, ISpanParsabl
     }
 }
 
-public static class ElementParser
-{
-    public static readonly IElementParser Float = new ElementParser<float>(1);
-    public static readonly IElementParser Float2 = new ElementParser<float>(2);
-    public static readonly IElementParser Float3 = new ElementParser<float>(3);
-    public static readonly IElementParser Float4 = new ElementParser<float>(4);
-    public static readonly IElementParser Byte4 = new ElementParser<byte>(4);
-    public static readonly IElementParser Half2 = new ElementParser<Half>(2);
-    public static readonly IElementParser Half4 = new ElementParser<Half>(4);
-    public static readonly IElementParser UShort = new ElementParser<ushort>(1);
-    public static readonly IElementParser Dec3N = new Dec3NElementParser();
-}
-
-
 public class Dec3NElementParser : ElementParser<float>
 {
     public Dec3NElementParser()

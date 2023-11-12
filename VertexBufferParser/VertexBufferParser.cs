@@ -45,25 +45,38 @@ public class VertexBufferParser
         // TODO: Pre-compute expression to avoid looping for each vertex
         foreach (var descriptor in SemanticDescriptors)
         {
-            var parser = GetVertexComponentParser(descriptor);
+            var parser = GetVertexElementParser(descriptor);
 
             (byteIndex, lineIndex) = parser.ParseElement(vertex, byteIndex, line, lineIndex, _formatProvider);
         }
     }
 
-    public static IElementParser GetVertexComponentParser(ElementDescriptor semanticDescriptor)
+    private static IElementParser GetVertexElementParser(ElementDescriptor semanticDescriptor)
     {
         return semanticDescriptor.Type switch
         {
-            "Float" => ElementParser.Float,
-            "Float2" => ElementParser.Float2,
-            "Float3" => ElementParser.Float3,
-            "Float4" => ElementParser.Float4,
-            "Dec3N" => ElementParser.Dec3N,
-            "Color" => ElementParser.Byte4,
-            "Half2" => ElementParser.Half2,
-            "Half4" => ElementParser.Half4,
+            "Float" => VertexElementParsers.Float,
+            "Float2" => VertexElementParsers.Float2,
+            "Float3" => VertexElementParsers.Float3,
+            "Float4" => VertexElementParsers.Float4,
+            "Dec3N" => VertexElementParsers.Dec3N,
+            "Color" => VertexElementParsers.Byte4,
+            "Half2" => VertexElementParsers.Half2,
+            "Half4" => VertexElementParsers.Half4,
             _ => throw new Exception(),
         };
     }
+}
+
+public static class VertexElementParsers
+{
+    public static readonly IElementParser Float = new ElementParser<float>(1);
+    public static readonly IElementParser Float2 = new ElementParser<float>(2);
+    public static readonly IElementParser Float3 = new ElementParser<float>(3);
+    public static readonly IElementParser Float4 = new ElementParser<float>(4);
+    public static readonly IElementParser Byte4 = new ElementParser<byte>(4);
+    public static readonly IElementParser Half2 = new ElementParser<Half>(2);
+    public static readonly IElementParser Half4 = new ElementParser<Half>(4);
+    public static readonly IElementParser UShort = new ElementParser<ushort>(1);
+    public static readonly IElementParser Dec3N = new Dec3NElementParser();
 }
