@@ -1,56 +1,116 @@
 ﻿using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Xml.Serialization;
 using VertexBufferParser;
 
-int vertexStride = 40;
-int verticesCount = 1_000_000;
-
 var xml =
     $"""
-    <VertexBuffer>
-      <VertexLayout>
-        <Elements>   
-          <Element semantic="Position" type="Float3" />
-          <Element semantic="Normals" type="Dec3N" />
-          <Element semantic="Color0" type="Colour" />
-          <Element semantic="Color1" type="Colour" />
-          <Element semantic="Texcoords0" type="Float2" />
-          <Element semantic="Texcoords1" type="Float2"  />
-        </Elements>
-      </VertexLayout>
-     <Vertices>
-        {string.Join(Environment.NewLine, Enumerable.Range(0, verticesCount).Select(c => "0.4 0.5 0.6    1 1 1    255 255 255 255    128 128 128 128    0.5 0.5    0.5 0.5"))}
-     </Vertices>
-    </VertexBuffer>
+    <Geometry>
+      <VertexBuffer>
+        <VertexLayout>
+          <Elements>
+            <Element semantic="Position" type="Float3" />
+            <Element semantic="Normals" type="Float3" />
+            <Element semantic="Color0" type="Color" />
+            <Element semantic="Texcoords0" type="Float2" />
+            <Element semantic="Tangents" type="Float3" />
+          </Elements>
+        </VertexLayout>
+        <VerticesCount>24</VerticesCount>
+        <Vertices>
+          -1.5 -1 -0.5    0 0 -1    255 255 255 255    0 0    1 0 0
+          1.5 -1 -0.5    0 0 -1    255 255 255 255    1 0    1 0 0
+          -1.5 1 -0.5   0 0 -1    255 255 255 255    0 1    1 0 0
+          1.5 1 -0.5    0 0 -1    255 255 255 255    1 1    1 0 0
+          -1.5 -1 0.5    0 0 1    255 255 255 255    1 0    1 0 0
+          1.5 -1 0.5    0 0 1    255 255 255 255    0 0    1 0 0
+          -1.5 1 0.5    0 0 1    255 255 255 255    1 1    1 0 0
+          1.5 1 0.5    0 0 1    255 255 255 255    0 1    1 0 0
+          -1.5 -1 -0.5    0 -1 0    255 255 255 255    0 1    1 0 0
+          1.5 -1 -0.5    0 -1 0    255 255 255 255    1 1    1 0 0
+          -1.5 -1 0.5    0 -1 0    255 255 255 255    0 0    1 0 0
+          1.5 -1 0.5    0 -1 0    255 255 255 255    1 0    1 0 0
+          -1.5 1 -0.5    0 1 0    255 255 255 255    1 1    1 0 0
+          1.5 1 -0.5    0 1 0    255 255 255 255    0 1    1 0 0
+          -1.5 1 0.5    0 1 0    255 255 255 255    1 0    1 0 0
+          1.5 1 0.5    0 1 0    255 255 255 255    0 0    1 0 0
+          -1.5 -1 -0.5    -1 0 0    255 255 255 255    0 0    0 1 0
+          -1.5 1 -0.5    -1 0 0    255 255 255 255    1 0    0 1 0
+          -1.5 -1 0.5    -1 0 0    255 255 255 255    0 1    0 1 0
+          -1.5 1 0.5    -1 0 0    255 255 255 255    1 1    0 1 0
+          1.5 -1 -0.5    1 0 0    255 255 255 255    0 1    0 1 0
+          1.5 1 -0.5    1 0 0    255 255 255 255    1 1    0 1 0
+          1.5 -1 0.5    1 0 0    255 255 255 255    0 0    0 1 0
+          1.5 1 0.5    1 0 0    255 255 255 255    1 0    0 1 0
+        </Vertices>
+      </VertexBuffer>
+      <IndexBuffer>
+        <Element semantic="Index" type="UShort" />
+        <IndicesCount>36</IndicesCount>
+        <Indices>
+          0 2 1 1 2 3 4 5 6 5
+          7 6 8 9 10 9 11 10 12 14
+          13 13 14 15 16 18 17 17 18 19
+          20 21 22 21 23 22
+        </Indices>
+      </IndexBuffer>
+    </Geometry>
     """;
 
-var serializer = new XmlSerializer(typeof(VertexBuffer));
+var serializer = new XmlSerializer(typeof(Geometry));
 using var stream = new StringReader(xml);
-VertexBuffer vertexBuffer = (VertexBuffer)serializer.Deserialize(stream)!;
-vertexBuffer.Vertices = new byte[vertexStride * verticesCount];
+Geometry geometry = (Geometry)serializer.Deserialize(stream)!;
 
-var vertexBufferParser = new VertexBufferParser.VertexBufferParser(vertexBuffer.VertexLayout.ElementDescriptors);
-vertexBufferParser.Parse(vertexBuffer.Vertices, vertexStride, vertexBuffer.VerticesText);
+VertexBuffer vertexBuffer = geometry.VertexBuffer;
+IndexBuffer indexBuffer = geometry.IndexBuffer;
+
+ParseVertices();
+ParseIndices();
 
 // Print expected values
 Dump();
 
+void ParseVertices()
+{
+    var vertexStride = Unsafe.SizeOf<Vertex>();
+    
+    vertexBuffer.Vertices = new byte[vertexStride * vertexBuffer.VerticesCount];
+    
+    new VertexBufferParser.VertexBufferParser(vertexBuffer.VertexLayout.ElementDescriptors)
+        .Parse(vertexBuffer.Vertices, vertexStride, vertexBuffer.VerticesText);
+}
+
+void ParseIndices()
+{
+    indexBuffer.Indices = new byte[2 * indexBuffer.IndicesCount];
+
+    new IndexBufferParser(indexBuffer.ElementDescriptor)
+        .Parse(indexBuffer.Indices, indexBuffer.IndicesText);
+}
+
 void Dump()
 {
-    var dump = MemoryMarshal.Cast<byte, Vertex>(vertexBuffer.Vertices);
-    for (int i = 0; i < dump.Length; i++)
+    var vertices = MemoryMarshal.Cast<byte, Vertex>(vertexBuffer.Vertices);
+
+    for (int i = 0; i < vertices.Length; i++)
     {
-        Console.WriteLine($"{i}: {dump[i]}");
+        Console.WriteLine($"{i}: {vertices[i]}");
+    }
+
+    var indices = MemoryMarshal.Cast<byte, ushort>(indexBuffer.Indices);
+
+    for (int i = 0; i < indices.Length; i++)
+    {
+        Console.WriteLine($"{i}: {indices[i]}");
     }
 }
 
 public readonly record struct Vertex(
     Vector3 Position,
-    Dec3N Normals,
+    Vector3 Normals,
     Color Color0,
-    Color Color1,
     Vector2 Texcoords0,
-    Vector2 Texcoords1);
+    Vector3 Tangents);
 
 public readonly record struct Color(byte R, byte G, byte B, byte A);

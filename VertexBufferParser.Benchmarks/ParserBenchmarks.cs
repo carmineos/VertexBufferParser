@@ -26,8 +26,8 @@ public class ParserBenchmarks
                 [
                     new ElementDescriptor() { Semantic = "Position", Type = "Float3" },
                     new ElementDescriptor() { Semantic = "Normals", Type = "Dec3N" },
-                    new ElementDescriptor() { Semantic = "Color0", Type = "Colour" },
-                    new ElementDescriptor() { Semantic = "Color1", Type = "Colour" },
+                    new ElementDescriptor() { Semantic = "Color0", Type = "Color" },
+                    new ElementDescriptor() { Semantic = "Color1", Type = "Color" },
                     new ElementDescriptor() { Semantic = "Texcoords0", Type = "Float2" },
                     new ElementDescriptor() { Semantic = "Texcoords1", Type = "Float2" },
                 ]

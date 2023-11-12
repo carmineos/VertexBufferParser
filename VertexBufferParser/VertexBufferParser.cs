@@ -60,7 +60,7 @@ public class VertexBufferParser
             "Float3" => ElementParser.Float3,
             "Float4" => ElementParser.Float4,
             "Dec3N" => ElementParser.Dec3N,
-            "Colour" => ElementParser.Byte4,
+            "Color" => ElementParser.Byte4,
             "Half2" => ElementParser.Half2,
             "Half4" => ElementParser.Half4,
             _ => throw new Exception(),
