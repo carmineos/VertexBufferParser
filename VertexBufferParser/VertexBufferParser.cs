@@ -4,11 +4,14 @@ namespace VertexBufferParser;
 
 public class VertexBufferParser
 {
+    private readonly IFormatProvider? _formatProvider;
+
     public ElementDescriptor[] SemanticDescriptors;
 
-    public VertexBufferParser(ElementDescriptor[] semanticDescriptors)
+    public VertexBufferParser(ElementDescriptor[] semanticDescriptors, IFormatProvider? formatProvider = null)
     {
         SemanticDescriptors = semanticDescriptors;
+        _formatProvider = formatProvider;
     }
 
     public void Parse(Span<byte> vertexBuffer, int vertexStride, ReadOnlySpan<char> verticesString)
@@ -39,11 +42,12 @@ public class VertexBufferParser
         var byteIndex = 0;
         var lineIndex = 0;
 
+        // TODO: Pre-compute expression to avoid looping for each vertex
         foreach (var descriptor in SemanticDescriptors)
         {
             var parser = GetVertexComponentParser(descriptor);
 
-            (byteIndex, lineIndex) = parser.ParseElement(vertex, byteIndex, line, lineIndex, null);
+            (byteIndex, lineIndex) = parser.ParseElement(vertex, byteIndex, line, lineIndex, _formatProvider);
         }
     }
 

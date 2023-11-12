@@ -15,9 +15,14 @@ public interface IElementParser
     public (int vertexOffsetEnd, int lineOffsetEnd) ParseElement(Span<byte> vertex, int vertexOffsetStart, ReadOnlySpan<char> line, int lineOffsetStart, IFormatProvider? formatProvider = null);
 }
 
-public abstract class ElementParser<T> : IElementParser where T : unmanaged, ISpanParsable<T>
+public class ElementParser<T> : IElementParser where T : unmanaged, ISpanParsable<T>
 {
-    public abstract int Count { get; }
+    private readonly int _count;
+
+    public ElementParser(int? count = null)
+    {
+        _count = count ?? int.MaxValue;
+    }
 
     public virtual (int vertexOffsetEnd, int lineOffsetEnd) ParseElement(Span<byte> vertex, int vertexOffsetStart, ReadOnlySpan<char> line, int lineOffsetStart, IFormatProvider? formatProvider = null)
     {
@@ -37,7 +42,7 @@ public abstract class ElementParser<T> : IElementParser where T : unmanaged, ISp
         int currentLineChunkStart = lineOffset;
         int currentLineChunkLength = 0;
 
-        while (componentsRead < Count && lineOffset < line.Length)
+        while (componentsRead < _count && lineOffset < line.Length)
         {
             var c = line[lineOffset];
 
@@ -92,44 +97,22 @@ public abstract class ElementParser<T> : IElementParser where T : unmanaged, ISp
 
 public static class ElementParser
 {
-    public static readonly IElementParser Float = new FloatElementParser();
-    public static readonly IElementParser Float2 = new Float2ElementParser();
-    public static readonly IElementParser Float3 = new Float3ElementParser();
-    public static readonly IElementParser Float4 = new Float4ElementParser();
-    public static readonly IElementParser Byte4 = new Byte4ElementParser();
+    public static readonly IElementParser Float = new ElementParser<float>(1);
+    public static readonly IElementParser Float2 = new ElementParser<float>(2);
+    public static readonly IElementParser Float3 = new ElementParser<float>(3);
+    public static readonly IElementParser Float4 = new ElementParser<float>(4);
+    public static readonly IElementParser Byte4 = new ElementParser<byte>(4);
+    public static readonly IElementParser Half2 = new ElementParser<Half>(2);
+    public static readonly IElementParser Half4 = new ElementParser<Half>(4);
+    public static readonly IElementParser UShort = new ElementParser<ushort>(1);
     public static readonly IElementParser Dec3N = new Dec3NElementParser();
-    public static readonly IElementParser Half2 = new Half2ElementParser();
-    public static readonly IElementParser Half4 = new Half4ElementParser();
 }
 
-public class FloatElementParser : ElementParser<float>
-{
-    public override int Count => 1;
-}
-
-public class Float2ElementParser : ElementParser<float>
-{
-    public override int Count => 2;
-}
-
-public class Float3ElementParser : ElementParser<float>
-{
-    public override int Count => 3;
-}
-
-public class Float4ElementParser : ElementParser<float>
-{
-    public override int Count => 4;
-}
-
-public class Byte4ElementParser : ElementParser<byte>
-{
-    public override int Count => 4;
-}
 
 public class Dec3NElementParser : ElementParser<float>
 {
-    public override int Count => 3;
+    public Dec3NElementParser()
+        : base(3) { }
 
     public override (int vertexOffsetEnd, int lineOffsetEnd) ParseElement(Span<byte> vertex, int vertexOffsetStart, ReadOnlySpan<char> line, int lineOffsetStart, IFormatProvider? formatProvider = null)
     {
@@ -147,14 +130,4 @@ public class Dec3NElementParser : ElementParser<float>
         // We know to have written only 4 bytes on the vertex
         return (vertexOffsetStart + 4, lineOffset);
     }
-}
-
-public class Half2ElementParser : ElementParser<Half>
-{
-    public override int Count => 2;
-}
-
-public class Half4ElementParser : ElementParser<Half>
-{
-    public override int Count => 4;
 }
