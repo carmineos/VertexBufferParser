@@ -35,8 +35,8 @@ public class VertexLayout
 [Serializable]
 public struct ElementDescriptor
 {
-    [XmlAttribute(AttributeName = "semantic")]
-    public string Semantic { get; set; }
+    [XmlAttribute(AttributeName = "name")]
+    public string Name { get; set; }
 
     [XmlAttribute(AttributeName = "type")]
     public string Type { get; set; }

@@ -4,22 +4,20 @@ namespace VertexBufferParser;
 
 public class VertexBufferParser
 {
+    private readonly ElementDescriptor[] _elementDescriptors;
     private readonly IFormatProvider? _formatProvider;
-
-    public ElementDescriptor[] SemanticDescriptors;
 
     public VertexBufferParser(ElementDescriptor[] semanticDescriptors, IFormatProvider? formatProvider = null)
     {
-        SemanticDescriptors = semanticDescriptors;
+        _elementDescriptors = semanticDescriptors;
         _formatProvider = formatProvider;
     }
 
     public void Parse(Span<byte> vertexBuffer, int vertexStride, ReadOnlySpan<char> verticesString)
     {
-        var verticesCount = vertexBuffer.Length / vertexStride;
+        var vertexCount = 0;
 
         var lines = verticesString.EnumerateLines();
-        var lineCount = 0;
 
         foreach (var line in lines)
         {
@@ -28,32 +26,32 @@ public class VertexBufferParser
                 continue;
 
             // read the vertex on each line
-            var vertexChunk = vertexBuffer.Slice(lineCount * vertexStride, vertexStride);
+            var vertexSpan = vertexBuffer.Slice(vertexCount * vertexStride, vertexStride);
 
-            ParseVertex(vertexChunk, line);
-            lineCount++;
+            ParseVertex(vertexSpan, line);
+            vertexCount++;
         }
 
-        Debug.Assert(verticesCount == lineCount);
+        Debug.Assert(vertexBuffer.Length / vertexStride == vertexCount);
     }
 
-    private void ParseVertex(Span<byte> vertex, ReadOnlySpan<char> line)
+    private void ParseVertex(Span<byte> vertexSpan, ReadOnlySpan<char> line)
     {
-        var byteIndex = 0;
-        var lineIndex = 0;
+        var vertexOffset = 0;
+        var lineOffset = 0;
 
         // TODO: Pre-compute expression to avoid looping for each vertex
-        foreach (var descriptor in SemanticDescriptors)
+        foreach (var descriptor in _elementDescriptors)
         {
             var parser = GetVertexElementParser(descriptor);
 
-            (byteIndex, lineIndex) = parser.ParseElement(vertex, byteIndex, line, lineIndex, _formatProvider);
+            (vertexOffset, lineOffset) = parser.ParseElement(vertexSpan, vertexOffset, line, lineOffset, _formatProvider);
         }
     }
 
-    private static IElementParser GetVertexElementParser(ElementDescriptor semanticDescriptor)
+    private static IElementParser GetVertexElementParser(ElementDescriptor elementDescriptor)
     {
-        return semanticDescriptor.Type switch
+        return elementDescriptor.Type switch
         {
             "Float" => VertexElementParsers.Float,
             "Float2" => VertexElementParsers.Float2,

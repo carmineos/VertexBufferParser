@@ -24,12 +24,12 @@ public class ParserBenchmarks
             {
                 ElementDescriptors =
                 [
-                    new ElementDescriptor() { Semantic = "Position", Type = "Float3" },
-                    new ElementDescriptor() { Semantic = "Normals", Type = "Dec3N" },
-                    new ElementDescriptor() { Semantic = "Color0", Type = "Color" },
-                    new ElementDescriptor() { Semantic = "Color1", Type = "Color" },
-                    new ElementDescriptor() { Semantic = "Texcoords0", Type = "Float2" },
-                    new ElementDescriptor() { Semantic = "Texcoords1", Type = "Float2" },
+                    new ElementDescriptor() { Name = "Position", Type = "Float3" },
+                    new ElementDescriptor() { Name = "Normals", Type = "Dec3N" },
+                    new ElementDescriptor() { Name = "Color0", Type = "Color" },
+                    new ElementDescriptor() { Name = "Color1", Type = "Color" },
+                    new ElementDescriptor() { Name = "Texcoords0", Type = "Float2" },
+                    new ElementDescriptor() { Name = "Texcoords1", Type = "Float2" },
                 ]
             }
         };

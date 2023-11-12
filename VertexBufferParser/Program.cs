@@ -10,11 +10,11 @@ var xml =
       <VertexBuffer>
         <VertexLayout>
           <Elements>
-            <Element semantic="Position" type="Float3" />
-            <Element semantic="Normals" type="Float3" />
-            <Element semantic="Color0" type="Color" />
-            <Element semantic="Texcoords0" type="Float2" />
-            <Element semantic="Tangents" type="Float3" />
+            <Element name="Position" type="Float3" />
+            <Element name="Normals" type="Float3" />
+            <Element name="Color0" type="Color" />
+            <Element name="Texcoords0" type="Float2" />
+            <Element name="Tangents" type="Float3" />
           </Elements>
         </VertexLayout>
         <VerticesCount>24</VerticesCount>
@@ -67,8 +67,6 @@ IndexBuffer indexBuffer = geometry.IndexBuffer;
 
 ParseVertices();
 ParseIndices();
-
-// Print expected values
 Dump();
 
 void ParseVertices()

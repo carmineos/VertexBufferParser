@@ -1,28 +1,25 @@
-﻿using System.Diagnostics;
-
-namespace VertexBufferParser;
+﻿namespace VertexBufferParser;
 
 public class IndexBufferParser
 {
+    private readonly ElementDescriptor _elementDescriptor;
     private readonly IFormatProvider? _formatProvider;
-
-    public ElementDescriptor ElementDescriptor;
 
     public IndexBufferParser(ElementDescriptor elementDescriptor, IFormatProvider? formatProvider = null)
     {
-        ElementDescriptor = elementDescriptor;
+        _elementDescriptor = elementDescriptor;
         _formatProvider = formatProvider;
     }
 
     public void Parse(Span<byte> indexBuffer, ReadOnlySpan<char> indicesString)
     {
-        var parser = GetIndexComponentParser(ElementDescriptor);
-        (_, _) = parser.ParseElement(indexBuffer, 0, indicesString, 0, _formatProvider);
+        var parser = GetIndexParser(_elementDescriptor);
+        _ = parser.ParseElement(indexBuffer, 0, indicesString, 0, _formatProvider);
     }
 
-    public static IElementParser GetIndexComponentParser(ElementDescriptor semanticDescriptor)
+    public static IElementParser GetIndexParser(ElementDescriptor elementDescriptor)
     {
-        return semanticDescriptor.Type switch
+        return elementDescriptor.Type switch
         {
             "UShort" => new ElementParser<ushort>(),
             _ => throw new Exception(),
