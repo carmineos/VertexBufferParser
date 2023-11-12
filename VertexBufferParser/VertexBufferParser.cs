@@ -51,10 +51,14 @@ public class VertexBufferParser
     {
         return semanticDescriptor.Type switch
         {
-            "Float2" => Float2ElementParser.Singleton,
-            "Float3" => Float3ElementParser.Singleton,
-            "Dec3N" => Dec3NElementParser.Singleton,
-            "Colour" => ColourElementParser.Singleton,
+            "Float" => ElementParser.Float,
+            "Float2" => ElementParser.Float2,
+            "Float3" => ElementParser.Float3,
+            "Float4" => ElementParser.Float4,
+            "Dec3N" => ElementParser.Dec3N,
+            "Colour" => ElementParser.Byte4,
+            "Half2" => ElementParser.Half2,
+            "Half4" => ElementParser.Half4,
             _ => throw new Exception(),
         };
     }

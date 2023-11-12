@@ -6,16 +6,20 @@ namespace VertexBufferParser;
 
 public interface IElementParser
 {
-    public int Count { get; }
-
-    public (int,int) ParseElement(Span<byte> vertex, int vertexIndex, ReadOnlySpan<char> line, int lineStart = 0, IFormatProvider? formatProvider = null);
+    /// <param name="vertex">The chunk representing a single vertex in the vertex buffer</param>
+    /// <param name="vertexOffsetStart">The offset into the single vertex where to write to</param>
+    /// <param name="line">The line to parse</param>
+    /// <param name="lineOffsetStart">The offset of the line where the parse has to start from</param>
+    /// <param name="formatProvider">The format provider</param>
+    /// <returns>The updated <paramref name="vertexOffsetStart"/> and <paramref name="lineOffsetStart"/> where the parsing stopped at</returns>
+    public (int vertexOffsetEnd, int lineOffsetEnd) ParseElement(Span<byte> vertex, int vertexOffsetStart, ReadOnlySpan<char> line, int lineOffsetStart, IFormatProvider? formatProvider = null);
 }
 
 public abstract class ElementParser<T> : IElementParser where T : unmanaged, ISpanParsable<T>
 {
     public abstract int Count { get; }
 
-    public virtual (int, int) ParseElement(Span<byte> vertex, int vertexOffsetStart, ReadOnlySpan<char> line, int lineOffsetStart = 0, IFormatProvider? formatProvider = null)
+    public virtual (int vertexOffsetEnd, int lineOffsetEnd) ParseElement(Span<byte> vertex, int vertexOffsetStart, ReadOnlySpan<char> line, int lineOffsetStart, IFormatProvider? formatProvider = null)
     {
         int componentSize = Unsafe.SizeOf<T>();
 
@@ -86,34 +90,48 @@ public abstract class ElementParser<T> : IElementParser where T : unmanaged, ISp
     }
 }
 
+public static class ElementParser
+{
+    public static readonly IElementParser Float = new FloatElementParser();
+    public static readonly IElementParser Float2 = new Float2ElementParser();
+    public static readonly IElementParser Float3 = new Float3ElementParser();
+    public static readonly IElementParser Float4 = new Float4ElementParser();
+    public static readonly IElementParser Byte4 = new Byte4ElementParser();
+    public static readonly IElementParser Dec3N = new Dec3NElementParser();
+    public static readonly IElementParser Half2 = new Half2ElementParser();
+    public static readonly IElementParser Half4 = new Half4ElementParser();
+}
+
+public class FloatElementParser : ElementParser<float>
+{
+    public override int Count => 1;
+}
+
 public class Float2ElementParser : ElementParser<float>
 {
-    public static Float2ElementParser Singleton = new Float2ElementParser();
-
     public override int Count => 2;
 }
 
 public class Float3ElementParser : ElementParser<float>
 {
-    public static Float3ElementParser Singleton = new Float3ElementParser();
-
     public override int Count => 3;
 }
 
-public class ColourElementParser : ElementParser<byte>
+public class Float4ElementParser : ElementParser<float>
 {
-    public static ColourElementParser Singleton = new ColourElementParser();
+    public override int Count => 4;
+}
 
+public class Byte4ElementParser : ElementParser<byte>
+{
     public override int Count => 4;
 }
 
 public class Dec3NElementParser : ElementParser<float>
 {
-    public static Dec3NElementParser Singleton = new Dec3NElementParser();
-
     public override int Count => 3;
 
-    public override (int, int) ParseElement(Span<byte> vertex, int vertexOffsetStart, ReadOnlySpan<char> line, int lineOffsetStart = 0, IFormatProvider? formatProvider = null)
+    public override (int vertexOffsetEnd, int lineOffsetEnd) ParseElement(Span<byte> vertex, int vertexOffsetStart, ReadOnlySpan<char> line, int lineOffsetStart, IFormatProvider? formatProvider = null)
     {
         // We read 3 floats in a temp buffer
         Span<float> tmp = stackalloc float[3];
@@ -129,4 +147,14 @@ public class Dec3NElementParser : ElementParser<float>
         // We know to have written only 4 bytes on the vertex
         return (vertexOffsetStart + 4, lineOffset);
     }
+}
+
+public class Half2ElementParser : ElementParser<Half>
+{
+    public override int Count => 2;
+}
+
+public class Half4ElementParser : ElementParser<Half>
+{
+    public override int Count => 4;
 }
