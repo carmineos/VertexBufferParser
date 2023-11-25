@@ -21,7 +21,7 @@ public class ElementWriter<T> : IElementWriter where T : unmanaged, ISpanFormatt
         _format = format;
     }
 
-    public int WriteElement(Span<byte> elementSpan, Span<char> destination, IFormatProvider? formatProvider = null)
+    public virtual int WriteElement(Span<byte> elementSpan, Span<char> destination, IFormatProvider? formatProvider = null)
     {
         Span<T> element = MemoryMarshal.Cast<byte, T>(elementSpan);
 
@@ -34,9 +34,9 @@ public class ElementWriter<T> : IElementWriter where T : unmanaged, ISpanFormatt
         for (int i = 0; i < element.Length; i++)
         {
             var item = element[i];
-            _ = item.TryFormat(destination.Slice(length), out int charsWritter, format, formatProvider);
+            _ = item.TryFormat(destination.Slice(length), out int charsWritten, format, formatProvider);
 
-            length += charsWritter;
+            length += charsWritten;
 
             if (i < element.Length - 1)
             {
@@ -47,5 +47,26 @@ public class ElementWriter<T> : IElementWriter where T : unmanaged, ISpanFormatt
         }
 
         return length;
+    }
+}
+
+public class Dec3NElementWriter : ElementWriter<float>
+{
+    public Dec3NElementWriter(string? itemSeparator = null, string? format = null)
+        : base(3, itemSeparator, format)
+    {     
+    }
+
+    public override int WriteElement(Span<byte> elementSpan, Span<char> destination, IFormatProvider? formatProvider = null)
+    {
+        // Get the Dec3N
+        var dec3N = MemoryMarshal.Read<Dec3N>(elementSpan);
+        
+        // Convert to 3 floats
+        Span<float> floats = stackalloc float[3] { dec3N.X, dec3N.Y, dec3N.Z };
+        var floatsSpan = MemoryMarshal.Cast<float, byte>(floats);
+
+        // Write as 3 floats
+        return base.WriteElement(floatsSpan, destination, formatProvider);
     }
 }
