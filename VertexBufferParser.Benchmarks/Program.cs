@@ -2,3 +2,4 @@
 using VertexBufferParser.Benchmarks;
 
 BenchmarkRunner.Run<ParserBenchmarks>();
+BenchmarkRunner.Run<WriterBenchmarks>();

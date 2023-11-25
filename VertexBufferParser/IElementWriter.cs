@@ -34,7 +34,7 @@ public class ElementWriter<T> : IElementWriter where T : unmanaged, ISpanFormatt
         for (int i = 0; i < element.Length; i++)
         {
             var item = element[i];
-            _ = item.TryFormat(destination.Slice(length), out int charsWritter, format ?? default, formatProvider);
+            _ = item.TryFormat(destination.Slice(length), out int charsWritter, format, formatProvider);
 
             length += charsWritter;
 
