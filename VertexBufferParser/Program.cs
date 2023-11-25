@@ -1,6 +1,7 @@
 ﻿using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Xml.Serialization;
 using VertexBufferParser;
 
@@ -67,7 +68,24 @@ IndexBuffer indexBuffer = geometry.IndexBuffer;
 
 ParseVertices();
 ParseIndices();
-Dump();
+//Dump();
+
+WriteVertices();
+
+
+void WriteVertices()
+{
+    var sb = new StringBuilder();
+    using var sw = new StringWriter(sb);
+
+    var vertexStride = Unsafe.SizeOf<Vertex>();
+
+    new VertexBufferWriter(vertexBuffer.VertexLayout.ElementDescriptors)
+        .Write(vertexBuffer.Vertices, vertexStride, sw);
+
+    sw.Flush();
+    File.WriteAllText("output.txt", sb.ToString());
+}
 
 void ParseVertices()
 {
