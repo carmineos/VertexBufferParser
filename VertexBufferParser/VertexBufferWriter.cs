@@ -21,7 +21,6 @@ public class VertexBufferWriter
 
         // TODO: Consider ArrayPool
         Span<char> lineBuffer = stackalloc char[1024];
-        lineBuffer.Fill(' ');
 
         for (int i = 0; i < vertexCount; i++)
         {
@@ -104,7 +103,7 @@ public class VertexBufferWriter
 
 public static class VertexElementWriters
 {
-    private const string floatFormat = "0.0";
+    private const string floatFormat = "0.######";
     //private const string floatFormat = "0.000000";
 
     public static readonly IElementWriter Float = new ElementWriter<float>(1, format: floatFormat);
