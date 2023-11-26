@@ -71,26 +71,10 @@ public class VertexBufferParser
 
         for (int i = 0; i < elementDescriptors.Length; i++)
         {
-            stride += GetVertexElementSize(elementDescriptors[i]);
+            stride += elementDescriptors[i].GetElementSize();
         }
 
         return stride;
-    }
-
-    private static int GetVertexElementSize(ElementDescriptor elementDescriptor)
-    {
-        return elementDescriptor.Type switch
-        {
-            "Float" => 4,
-            "Float2" => 8,
-            "Float3" => 12,
-            "Float4" => 16,
-            "Dec3N" => 4,
-            "Color" => 4,
-            "Half2" => 4,
-            "Half4" => 8,
-            _ => throw new Exception(),
-        };
     }
 }
 

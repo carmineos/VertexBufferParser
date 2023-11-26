@@ -50,7 +50,7 @@ public class VertexBufferWriter
         {
             var descriptor = _elementDescriptors[i];
 
-            var elementSize = GetVertexElementSize(descriptor);
+            var elementSize = descriptor.GetElementSize();
             var elementSpan = vertexSpan.Slice(vertexOffset, elementSize);
 
             var elementWriter = GetVertexElementWriter(descriptor);
@@ -82,22 +82,6 @@ public class VertexBufferWriter
             "Color" => VertexElementWriters.Byte4,
             "Half2" => VertexElementWriters.Half2,
             "Half4" => VertexElementWriters.Half4,
-            _ => throw new Exception(),
-        };
-    }
-
-    private static int GetVertexElementSize(ElementDescriptor elementDescriptor)
-    {
-        return elementDescriptor.Type switch
-        {
-            "Float" => 4,
-            "Float2" => 8,
-            "Float3" => 12,
-            "Float4" => 16,
-            "Dec3N" => 4,
-            "Color" => 4,
-            "Half2" => 4,
-            "Half4" => 8,
             _ => throw new Exception(),
         };
     }

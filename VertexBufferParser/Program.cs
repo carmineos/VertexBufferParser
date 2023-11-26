@@ -71,6 +71,7 @@ ParseIndices();
 //Dump();
 
 WriteVertices();
+WriteIndices();
 
 
 void WriteVertices()
@@ -84,7 +85,21 @@ void WriteVertices()
         .Write(vertexBuffer.Vertices, vertexStride, sw);
 
     sw.Flush();
-    File.WriteAllText("output.txt", sb.ToString());
+    File.WriteAllText("vertices.txt", sb.ToString());
+}
+
+void WriteIndices()
+{
+    var sb = new StringBuilder();
+    using var sw = new StringWriter(sb);
+
+    var vertexStride = Unsafe.SizeOf<Vertex>();
+
+    new IndexBufferWriter(indexBuffer.ElementDescriptor)
+        .Write(indexBuffer.Indices, sw);
+
+    sw.Flush();
+    File.WriteAllText("indices.txt", sb.ToString());
 }
 
 void ParseVertices()

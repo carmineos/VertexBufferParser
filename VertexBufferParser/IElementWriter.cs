@@ -26,8 +26,6 @@ public class ElementWriter<T> : IElementWriter where T : unmanaged, ISpanFormatt
     {
         Span<T> element = MemoryMarshal.Cast<byte, T>(elementSpan);
 
-        Debug.Assert(element.Length == _count);
-
         int length = 0;
 
         var format = _format;
