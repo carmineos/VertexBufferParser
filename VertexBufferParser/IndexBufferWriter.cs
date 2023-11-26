@@ -53,9 +53,10 @@ public class IndexBufferWriter
                 charsWritten = writer.WriteElement(indicesChunk, destination, _formatProvider);
             }
 
-            textWriter.Write(destination.AsSpan(0, charsWritten));
-            pool.Return(destination);
+            textWriter.Write(destination.AsSpan(0, charsWritten)); 
         }
+
+        pool.Return(destination);
     }
 
     public static IElementWriter GetIndexWriter(ElementDescriptor elementDescriptor, int? count = null, string? separator = null, string? format = null)
