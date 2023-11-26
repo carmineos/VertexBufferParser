@@ -60,6 +60,6 @@ public class WriterBenchmarks
     [Benchmark]
     public void Write()
     {
-        VertexBufferWriter.Write(VertexBuffer.Vertices, vertexStride, writer);
+        VertexBufferWriter.Write(VertexBuffer.Vertices, writer);
     }
 }

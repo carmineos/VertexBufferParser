@@ -17,8 +17,9 @@ public class VertexBufferWriter
         _formatProvider = formatProvider;
     }
 
-    public void Write(Span<byte> vertexBuffer, int vertexStride, TextWriter writer)
+    public void Write(Span<byte> vertexBuffer, TextWriter writer)
     {
+        var vertexStride = ElementDescriptorExtensions.ComputeVertexStride(_elementDescriptors);
         var vertexCount = vertexBuffer.Length / vertexStride;
 
         // TODO: Is 512 enough to cover all the cases? Otherwise consider using ArrayPool

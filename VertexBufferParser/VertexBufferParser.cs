@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace VertexBufferParser;
+﻿namespace VertexBufferParser;
 
 public class VertexBufferParser
 {
@@ -13,10 +11,11 @@ public class VertexBufferParser
         _formatProvider = formatProvider;
     }
 
-    public void Parse(Span<byte> vertexBuffer, int vertexStride, ReadOnlySpan<char> verticesString)
+    public void Parse(Span<byte> vertexBuffer, ReadOnlySpan<char> verticesString)
     {
         var vertexCount = 0;
-
+        var vertexStride = ElementDescriptorExtensions.ComputeVertexStride(_elementDescriptors);
+        
         var lines = verticesString.EnumerateLines();
 
         foreach (var line in lines)
@@ -31,8 +30,6 @@ public class VertexBufferParser
             ParseVertex(vertexSpan, line);
             vertexCount++;
         }
-
-        Debug.Assert(vertexBuffer.Length / vertexStride == vertexCount);
     }
 
     private void ParseVertex(Span<byte> vertexSpan, ReadOnlySpan<char> line)
@@ -63,18 +60,6 @@ public class VertexBufferParser
             "Half4" => VertexElementParsers.Half4,
             _ => throw new Exception(),
         };
-    }
-
-    private static int ComputeVertexStride(ElementDescriptor[] elementDescriptors)
-    {
-        int stride = 0;
-
-        for (int i = 0; i < elementDescriptors.Length; i++)
-        {
-            stride += elementDescriptors[i].GetElementSize();
-        }
-
-        return stride;
     }
 }
 

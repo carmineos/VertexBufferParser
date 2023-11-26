@@ -82,7 +82,7 @@ void WriteVertices()
     var vertexStride = Unsafe.SizeOf<Vertex>();
 
     new VertexBufferWriter(vertexBuffer.VertexLayout.ElementDescriptors)
-        .Write(vertexBuffer.Vertices, vertexStride, sw);
+        .Write(vertexBuffer.Vertices, sw);
 
     sw.Flush();
     File.WriteAllText("vertices.txt", sb.ToString());
@@ -109,7 +109,7 @@ void ParseVertices()
     vertexBuffer.Vertices = new byte[vertexStride * vertexBuffer.VerticesCount];
     
     new VertexBufferParser.VertexBufferParser(vertexBuffer.VertexLayout.ElementDescriptors)
-        .Parse(vertexBuffer.Vertices, vertexStride, vertexBuffer.VerticesText);
+        .Parse(vertexBuffer.Vertices, vertexBuffer.VerticesText);
 }
 
 void ParseIndices()

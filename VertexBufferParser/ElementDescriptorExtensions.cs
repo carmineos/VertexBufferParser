@@ -18,4 +18,16 @@ public static class ElementDescriptorExtensions
             _ => throw new Exception(),
         };
     }
+
+    public static int ComputeVertexStride(ElementDescriptor[] elementDescriptors)
+    {
+        int stride = 0;
+
+        for (int i = 0; i < elementDescriptors.Length; i++)
+        {
+            stride += elementDescriptors[i].GetElementSize();
+        }
+
+        return stride;
+    }
 }

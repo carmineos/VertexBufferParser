@@ -46,6 +46,6 @@ public class ParserBenchmarks
     [Benchmark]
     public void Parse()
     {
-        VertexBufferParser.Parse(VertexBuffer.Vertices, vertexStride, verticesString);
+        VertexBufferParser.Parse(VertexBuffer.Vertices, verticesString);
     }
 }
