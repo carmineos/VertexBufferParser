@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Globalization;
 using System.Runtime.InteropServices;
 
 namespace VertexBufferParser;
@@ -34,7 +35,7 @@ public class ElementWriter<T> : IElementWriter where T : unmanaged, ISpanFormatt
         for (int i = 0; i < element.Length; i++)
         {
             var item = element[i];
-            _ = item.TryFormat(destination.Slice(length), out int charsWritten, format, formatProvider);
+            _ = item.TryFormat(destination.Slice(length), out int charsWritten, format, formatProvider ??= NumberFormatInfo.InvariantInfo);
 
             length += charsWritten;
 

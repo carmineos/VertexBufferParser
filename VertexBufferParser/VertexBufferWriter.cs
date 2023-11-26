@@ -105,7 +105,7 @@ public class VertexBufferWriter
 
 public static class VertexElementWriters
 {
-    private const string floatFormat = "0.######";
+    private const string floatFormat = "G9";
 
     public static readonly IElementWriter Float = new ElementWriter<float>(1, format: floatFormat);
     public static readonly IElementWriter Float2 = new ElementWriter<float>(2, format: floatFormat);
