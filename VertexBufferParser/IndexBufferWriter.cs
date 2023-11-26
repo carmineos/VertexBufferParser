@@ -25,11 +25,11 @@ public class IndexBufferWriter
 
         var elementSize = _elementDescriptor.GetElementSize();
         var indicesCount = indexBuffer.Length / elementSize;
-        
-        // TODO: Compute buffer size
-        var destination = pool.Rent(IndicesPerLine * 8);
 
-        var writer = GetIndexWriter(_elementDescriptor);
+        var maxLineLength = ComputeMaxLineLength(indicesCount);
+        var lineBuffer = pool.Rent(maxLineLength);
+
+        var elementWriter = GetIndexWriter(_elementDescriptor);
 
         var linesCount = (indicesCount / IndicesPerLine) + (indicesCount % IndicesPerLine == 0 ? 0 : 1);
 
@@ -41,22 +41,32 @@ public class IndexBufferWriter
             if (i < linesCount - 1)
             {
                 indicesChunk = indexBuffer.Slice(i * elementSize * IndicesPerLine, elementSize * IndicesPerLine);
-                charsWritten = writer.WriteElement(indicesChunk, destination, _formatProvider);
+                charsWritten = elementWriter.WriteElement(indicesChunk, lineBuffer, _formatProvider);
 
                 // Copy the separator and increase the length
-                Environment.NewLine.AsSpan().CopyTo(destination.AsSpan().Slice(charsWritten, Environment.NewLine.Length));
+                Environment.NewLine.AsSpan().CopyTo(lineBuffer.AsSpan().Slice(charsWritten, Environment.NewLine.Length));
                 charsWritten += Environment.NewLine.Length;
             }
             else
             {
                 indicesChunk = indexBuffer.Slice(i * elementSize * IndicesPerLine);
-                charsWritten = writer.WriteElement(indicesChunk, destination, _formatProvider);
+                charsWritten = elementWriter.WriteElement(indicesChunk, lineBuffer, _formatProvider);
             }
 
-            textWriter.Write(destination.AsSpan(0, charsWritten)); 
+            textWriter.Write(lineBuffer.AsSpan(0, charsWritten)); 
         }
 
-        pool.Return(destination);
+        pool.Return(lineBuffer);
+    }
+
+    private int ComputeMaxLineLength(int count)
+    {
+        // Or even ushort.MaxValue/uint.MaxValue
+        var maxDigitsCount = count.ToString().Length;
+
+        return (IndicesPerLine * maxDigitsCount)
+            + ((IndicesPerLine - 1) * IndicesSeparator.Length)
+            + Environment.NewLine.Length;
     }
 
     public static IElementWriter GetIndexWriter(ElementDescriptor elementDescriptor, int? count = null, string? separator = null, string? format = null)
@@ -64,6 +74,7 @@ public class IndexBufferWriter
         return elementDescriptor.Type switch
         {
             "UShort" => new ElementWriter<ushort>(count, separator, format),
+            "UInt" => new ElementWriter<uint>(count, separator, format),
             _ => throw new Exception(),
         };
     }
