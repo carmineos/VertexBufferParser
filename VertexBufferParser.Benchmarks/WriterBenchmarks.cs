@@ -1,7 +1,6 @@
-﻿using BenchmarkDotNet.Attributes;
-using System.Numerics;
+﻿using System.Numerics;
 using System.Runtime.InteropServices;
-using System.Text;
+using BenchmarkDotNet.Attributes;
 
 namespace VertexBufferParser.Benchmarks;
 
@@ -52,9 +51,8 @@ public class WriterBenchmarks
 
 
         VertexBufferWriter = new VertexBufferWriter(VertexBuffer.VertexLayout.ElementDescriptors);
-
-        var sb = new StringBuilder();
-        writer = new StringWriter(sb);
+        
+        writer = new StreamWriter(Stream.Null);
     }
 
     [Benchmark]
