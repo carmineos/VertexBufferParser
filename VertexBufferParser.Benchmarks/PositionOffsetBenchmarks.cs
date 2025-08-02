@@ -54,14 +54,8 @@ public class PositionOffsetBenchmarks
     public void PositionOffset()
     {
         var offset = new Vector3(1.0f, 2.0f, 3.0f);
-        
-        var descriptors = VertexBuffer.VertexLayout.ElementDescriptors;
-    
-        // Create Span and Accessor
-        var span = new VertexSpan(VertexBuffer.Vertices, vertexStride);
-        var accessor = new VertexElementAccessor(span, descriptors);
 
-        var positions = accessor.GetElementSpan<Vector3>(ElementDescriptorName.Position);
+        var positions = VertexBuffer.GetElementSpan<Vector3>(ElementDescriptorName.Position);
     
         for (int i = 0; i < positions.Length; i++)
         {

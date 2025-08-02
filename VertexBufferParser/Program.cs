@@ -128,7 +128,7 @@ void ParseIndices()
 
 void Dump()
 {
-    var vertices = MemoryMarshal.Cast<byte, Vertex>(vertexBuffer.Vertices);
+    var vertices = vertexBuffer.GetTypedVertices<Vertex>();
 
     for (int i = 0; i < vertices.Length; i++)
     {
@@ -145,14 +145,7 @@ void Dump()
 
 void UpdatePosition(VertexBuffer buffer, Vector3 offset)
 {
-    var descriptors = buffer.VertexLayout.ElementDescriptors;
-    var stride = ElementDescriptorExtensions.ComputeVertexStride(descriptors);
-    
-    // Create Span and Accessor
-    var span = new VertexSpan(buffer.Vertices, stride);
-    var accessor = new VertexElementAccessor(span, descriptors);
-
-    var positions = accessor.GetElementSpan<Vector3>(ElementDescriptorName.Position);
+    var positions = buffer.GetElementSpan<Vector3>(ElementDescriptorName.Position);
     
     for (int i = 0; i < positions.Length; i++)
     {
@@ -163,14 +156,7 @@ void UpdatePosition(VertexBuffer buffer, Vector3 offset)
 
 void UpdateColor0(VertexBuffer buffer, Color color)
 {
-    var descriptors = buffer.VertexLayout.ElementDescriptors;
-    var stride = ElementDescriptorExtensions.ComputeVertexStride(descriptors);
-    
-    // Create Span and Accessor
-    var span = new VertexSpan(buffer.Vertices, stride);
-    var accessor = new VertexElementAccessor(span, descriptors);
-
-    var colors = accessor.GetElementSpan<Color>(ElementDescriptorName.Color0);
+    var colors = buffer.GetElementSpan<Color>(ElementDescriptorName.Color0);
     
     for (int i = 0; i < colors.Length; i++)
     {

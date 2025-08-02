@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System.Runtime.InteropServices;
+using System.Xml.Serialization;
 
 namespace VertexBufferParser;
 
@@ -22,6 +23,22 @@ public class VertexBuffer
 
     [XmlElement(ElementName = "Vertices")]
     public string VerticesText { get; set; }
+    
+    public VertexElementSpan<T> GetElementSpan<T>(ElementDescriptorName name) where T : unmanaged
+    {
+        var descriptors = VertexLayout.ElementDescriptors;
+        var stride = ElementDescriptorExtensions.ComputeVertexStride(descriptors);
+        
+        var span = new VertexSpan(Vertices, stride);
+        var accessor = new VertexElementAccessor(span, descriptors);
+
+        return accessor.GetElementSpan<T>(name);
+    }
+    
+    public Span<T> GetTypedVertices<T>() where T : unmanaged
+    {
+        return MemoryMarshal.Cast<byte, T>(Vertices);
+    }
 }
 
 [Serializable]
