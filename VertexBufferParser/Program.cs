@@ -63,6 +63,8 @@ var serializer = new XmlSerializer(typeof(Geometry));
 using var stream = new StringReader(xml);
 Geometry geometry = (Geometry)serializer.Deserialize(stream)!;
 
+geometry.VertexBuffer.VertexLayout.ComputeOffsetsAndSizes();
+
 VertexBuffer vertexBuffer = geometry.VertexBuffer;
 IndexBuffer indexBuffer = geometry.IndexBuffer;
 
@@ -73,6 +75,8 @@ ParseIndices();
 WriteVertices();
 WriteIndices();
 
+UpdatePosition(vertexBuffer, new Vector3(10, 0, 0));
+//Dump();
 
 void WriteVertices()
 {
@@ -134,6 +138,22 @@ void Dump()
     for (int i = 0; i < indices.Length; i++)
     {
         Console.WriteLine($"{i}: {indices[i]}");
+    }
+}
+
+void UpdatePosition(VertexBuffer vertexBuffer, Vector3 offset)
+{
+    var descriptors = vertexBuffer.VertexLayout.ElementDescriptors;
+    var stride = ElementDescriptorExtensions.ComputeVertexStride(descriptors);
+    
+    // Create Span and Accessor
+    var span = new VertexSpan(vertexBuffer.Vertices, stride);
+    var accessor = new VertexElementAccessor(span, descriptors);
+    
+    for (int i = 0; i < accessor.VertexCount; i++)
+    {
+        ref Vector3 position = ref accessor.GetElement<Vector3>(i, 0);
+        position += offset;
     }
 }
 

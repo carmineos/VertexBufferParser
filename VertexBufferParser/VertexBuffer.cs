@@ -30,16 +30,34 @@ public class VertexLayout
     [XmlArray("Elements")]
     [XmlArrayItem("Element")]
     public ElementDescriptor[] ElementDescriptors { get; set; }
+    
+    public void ComputeOffsetsAndSizes()
+    {
+        int offset = 0;
+        
+        foreach (var element in ElementDescriptors)
+        {
+            element.Offset = offset;
+            element.Size = element.GetElementSize();
+            offset += element.Size;
+        }
+    }
 }
 
 [Serializable]
-public struct ElementDescriptor
+public class ElementDescriptor
 {
     [XmlAttribute(AttributeName = "name")]
     public string Name { get; set; }
 
     [XmlAttribute(AttributeName = "type")]
     public string Type { get; set; }
+    
+    [XmlIgnore]
+    public int Offset { get; set; }
+    
+    [XmlIgnore]
+    public int Size { get; set; }
 }
 
 [Serializable]
