@@ -47,7 +47,7 @@ var xml =
         </Vertices>
       </VertexBuffer>
       <IndexBuffer>
-        <Element semantic="Index" type="UShort" />
+        <Element name="Index" type="UShort" />
         <IndicesCount>36</IndicesCount>
         <Indices>
           0 2 1 1 2 3 4 5 6 5
@@ -72,11 +72,13 @@ ParseVertices();
 ParseIndices();
 //Dump();
 
+UpdatePosition(vertexBuffer, new Vector3(10, 0, 0));
+UpdateColor0(vertexBuffer, new Color(33, 66, 99, 127));
+Dump();
+
 WriteVertices();
 WriteIndices();
 
-UpdatePosition(vertexBuffer, new Vector3(10, 0, 0));
-//Dump();
 
 void WriteVertices()
 {
@@ -141,21 +143,41 @@ void Dump()
     }
 }
 
-void UpdatePosition(VertexBuffer vertexBuffer, Vector3 offset)
+void UpdatePosition(VertexBuffer buffer, Vector3 offset)
 {
-    var descriptors = vertexBuffer.VertexLayout.ElementDescriptors;
+    var descriptors = buffer.VertexLayout.ElementDescriptors;
     var stride = ElementDescriptorExtensions.ComputeVertexStride(descriptors);
     
     // Create Span and Accessor
-    var span = new VertexSpan(vertexBuffer.Vertices, stride);
+    var span = new VertexSpan(buffer.Vertices, stride);
     var accessor = new VertexElementAccessor(span, descriptors);
+
+    var positions = accessor.GetElementSpan<Vector3>(ElementDescriptorName.Position);
     
-    for (int i = 0; i < accessor.VertexCount; i++)
+    for (int i = 0; i < positions.Length; i++)
     {
-        ref Vector3 position = ref accessor.GetElement<Vector3>(i, 0);
+        ref var position = ref positions[i];
         position += offset;
     }
 }
+
+void UpdateColor0(VertexBuffer buffer, Color color)
+{
+    var descriptors = buffer.VertexLayout.ElementDescriptors;
+    var stride = ElementDescriptorExtensions.ComputeVertexStride(descriptors);
+    
+    // Create Span and Accessor
+    var span = new VertexSpan(buffer.Vertices, stride);
+    var accessor = new VertexElementAccessor(span, descriptors);
+
+    var colors = accessor.GetElementSpan<Color>(ElementDescriptorName.Color0);
+    
+    for (int i = 0; i < colors.Length; i++)
+    {
+        colors[i] = color;
+    }
+}
+
 
 public readonly record struct Vertex(
     Vector3 Position,

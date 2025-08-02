@@ -44,11 +44,24 @@ public class VertexLayout
     }
 }
 
+public enum ElementDescriptorName
+{
+    [XmlEnum] Index,
+    
+    [XmlEnum] Position,
+    [XmlEnum] Normals,
+    [XmlEnum] Color0,
+    [XmlEnum] Color1,
+    [XmlEnum] Texcoords0,
+    [XmlEnum] Texcoords1,
+    [XmlEnum] Tangents,
+}
+
 [Serializable]
 public class ElementDescriptor
 {
     [XmlAttribute(AttributeName = "name")]
-    public string Name { get; set; }
+    public ElementDescriptorName Name { get; set; }
 
     [XmlAttribute(AttributeName = "type")]
     public string Type { get; set; }

@@ -6,7 +6,7 @@ using System.Text;
 namespace VertexBufferParser.Benchmarks;
 
 [MemoryDiagnoser]
-public class WriterBenchmarks
+public class PositionOffsetBenchmarks
 {
     private const int vertexStride = 48;
 
@@ -14,9 +14,6 @@ public class WriterBenchmarks
     public int verticesCount { get; set; }
 
     private VertexBuffer VertexBuffer;
-    private VertexBufferWriter VertexBufferWriter;
-
-    private TextWriter writer;
 
     [GlobalSetup]
     public void Setup()
@@ -35,6 +32,8 @@ public class WriterBenchmarks
                 ]
             }
         };
+        
+        VertexBuffer.VertexLayout.ComputeOffsetsAndSizes();
 
         VertexBuffer.Vertices = new byte[vertexStride * verticesCount];
 
@@ -49,17 +48,25 @@ public class WriterBenchmarks
 
         var verticesSpan = MemoryMarshal.Cast<byte, Vertex>(VertexBuffer.Vertices);
         verticesSpan.Fill(vertex);
-
-
-        VertexBufferWriter = new VertexBufferWriter(VertexBuffer.VertexLayout.ElementDescriptors);
-
-        var sb = new StringBuilder();
-        writer = new StringWriter(sb);
     }
 
     [Benchmark]
-    public void Write()
+    public void PositionOffset()
     {
-        VertexBufferWriter.Write(VertexBuffer.Vertices, writer);
+        var offset = new Vector3(1.0f, 2.0f, 3.0f);
+        
+        var descriptors = VertexBuffer.VertexLayout.ElementDescriptors;
+    
+        // Create Span and Accessor
+        var span = new VertexSpan(VertexBuffer.Vertices, vertexStride);
+        var accessor = new VertexElementAccessor(span, descriptors);
+
+        var positions = accessor.GetElementSpan<Vector3>(ElementDescriptorName.Position);
+    
+        for (int i = 0; i < positions.Length; i++)
+        {
+            ref var position = ref positions[i];
+            position += offset;
+        }
     }
 }

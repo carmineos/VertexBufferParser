@@ -30,4 +30,15 @@ public static class ElementDescriptorExtensions
 
         return stride;
     }
+    
+    public static ElementDescriptor GetDescriptor(ElementDescriptor[] elementDescriptors, ElementDescriptorName name)
+    {
+        foreach (var desc in elementDescriptors)
+        {
+            if (desc.Name == name)
+                return desc;
+        }
+        
+        throw new ArgumentException($"Descriptor with name '{name}' not found.", nameof(name));
+    }
 }

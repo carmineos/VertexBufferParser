@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace VertexBufferParser;
 
@@ -18,7 +19,7 @@ public readonly ref struct VertexElementAccessor
     public int VertexCount => _vertices.Length;
     public int ElementCount => _elements.Length;
 
-    public Span<byte> GetElement(int vertexIndex, ElementDescriptor desc)
+    private Span<byte> GetElement(int vertexIndex, ElementDescriptor desc)
     {
         var vertex = _vertices[vertexIndex];
         if (desc.Offset < 0 || desc.Offset + desc.Size > vertex.Length)
@@ -33,7 +34,7 @@ public readonly ref struct VertexElementAccessor
         return GetElement(vertexIndex, _elements[elementIndex]);
     }
 
-    public ref T GetElement<T>(int vertexIndex, ElementDescriptor desc) where T : unmanaged
+    private ref T GetElement<T>(int vertexIndex, ElementDescriptor desc) where T : unmanaged
     {
         var span = GetElement(vertexIndex, desc);
         if (span.Length < Unsafe.SizeOf<T>())
@@ -46,5 +47,22 @@ public readonly ref struct VertexElementAccessor
         if ((uint)elementIndex >= (uint)_elements.Length)
             throw new ArgumentOutOfRangeException(nameof(elementIndex));
         return ref GetElement<T>(vertexIndex, _elements[elementIndex]);
+    }
+    
+    public ref T GetElement<T>(int vertexIndex, ElementDescriptorName name) where T : unmanaged
+    {
+        var desc = ElementDescriptorExtensions.GetDescriptor(_elements, name);
+        return ref GetElement<T>(vertexIndex, desc);
+    }
+
+    private VertexElementSpan<T> GetElementSpan<T>(ElementDescriptor desc) where T : unmanaged
+    {
+        return new VertexElementSpan<T>(_vertices, desc);
+    }
+    
+    public VertexElementSpan<T> GetElementSpan<T>(ElementDescriptorName name) where T : unmanaged
+    {
+        var desc = ElementDescriptorExtensions.GetDescriptor(_elements, name);
+        return GetElementSpan<T>(desc);
     }
 }
