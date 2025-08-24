@@ -24,11 +24,11 @@ public class PositionOffsetBenchmarks
             {
                 ElementDescriptors =
                 [
-                    new ElementDescriptor() { Name = ElementDescriptorName.Position, Type = "Float3" },
-                    new ElementDescriptor() { Name = ElementDescriptorName.Normals, Type = "Float3" },
-                    new ElementDescriptor() { Name = ElementDescriptorName.Color0, Type = "Color" },
-                    new ElementDescriptor() { Name = ElementDescriptorName.Texcoords0, Type = "Float2" },
-                    new ElementDescriptor() { Name = ElementDescriptorName.Tangents, Type = "Float3" },
+                    new ElementDescriptor() { Name = ElementDescriptorName.Position, Type = ElementDescriptorType.Float3 },
+                    new ElementDescriptor() { Name = ElementDescriptorName.Normals, Type = ElementDescriptorType.Float3 },
+                    new ElementDescriptor() { Name = ElementDescriptorName.Color0, Type = ElementDescriptorType.Color },
+                    new ElementDescriptor() { Name = ElementDescriptorName.Texcoords0, Type = ElementDescriptorType.Float2 },
+                    new ElementDescriptor() { Name = ElementDescriptorName.Tangents, Type = ElementDescriptorType.Float3 },
                 ]
             }
         };

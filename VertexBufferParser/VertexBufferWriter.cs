@@ -75,14 +75,14 @@ public class VertexBufferWriter
     {
         return elementDescriptor.Type switch
         {
-            "Float" => VertexElementWriters.Float,
-            "Float2" => VertexElementWriters.Float2,
-            "Float3" => VertexElementWriters.Float3,
-            "Float4" => VertexElementWriters.Float4,
-            "Dec3N" => VertexElementWriters.Dec3N,
-            "Color" => VertexElementWriters.Byte4,
-            "Half2" => VertexElementWriters.Half2,
-            "Half4" => VertexElementWriters.Half4,
+            ElementDescriptorType.Float => VertexElementWriters.Float,
+            ElementDescriptorType.Float2 => VertexElementWriters.Float2,
+            ElementDescriptorType.Float3 => VertexElementWriters.Float3,
+            ElementDescriptorType.Float4 => VertexElementWriters.Float4,
+            ElementDescriptorType.Dec3N => VertexElementWriters.Dec3N,
+            ElementDescriptorType.Color => VertexElementWriters.Byte4,
+            ElementDescriptorType.Half2 => VertexElementWriters.Half2,
+            ElementDescriptorType.Half4 => VertexElementWriters.Half4,
             _ => throw new Exception(),
         };
     }

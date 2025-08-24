@@ -24,12 +24,12 @@ public class ParserBenchmarks
             {
                 ElementDescriptors =
                 [
-                    new ElementDescriptor() { Name = ElementDescriptorName.Position, Type = "Float3" },
-                    new ElementDescriptor() { Name = ElementDescriptorName.Normals, Type = "Dec3N" },
-                    new ElementDescriptor() { Name = ElementDescriptorName.Color0, Type = "Color" },
-                    new ElementDescriptor() { Name = ElementDescriptorName.Color1, Type = "Color" },
-                    new ElementDescriptor() { Name = ElementDescriptorName.Texcoords0, Type = "Float2" },
-                    new ElementDescriptor() { Name = ElementDescriptorName.Texcoords1, Type = "Float2" },
+                    new ElementDescriptor() { Name = ElementDescriptorName.Position, Type = ElementDescriptorType.Float3 },
+                    new ElementDescriptor() { Name = ElementDescriptorName.Normals, Type = ElementDescriptorType.Dec3N },
+                    new ElementDescriptor() { Name = ElementDescriptorName.Color0, Type = ElementDescriptorType.Color },
+                    new ElementDescriptor() { Name = ElementDescriptorName.Color1, Type = ElementDescriptorType.Color },
+                    new ElementDescriptor() { Name = ElementDescriptorName.Texcoords0, Type = ElementDescriptorType.Float2 },
+                    new ElementDescriptor() { Name = ElementDescriptorName.Texcoords1, Type = ElementDescriptorType.Float2 },
                 ]
             }
         };

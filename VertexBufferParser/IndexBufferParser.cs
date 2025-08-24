@@ -21,7 +21,7 @@ public class IndexBufferParser
     {
         return elementDescriptor.Type switch
         {
-            "UShort" => new ElementParser<ushort>(),
+            ElementDescriptorType.UShort => new ElementParser<ushort>(),
             _ => throw new Exception(),
         };
     }

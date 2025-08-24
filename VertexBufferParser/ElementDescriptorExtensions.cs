@@ -6,15 +6,16 @@ public static class ElementDescriptorExtensions
     {
         return elementDescriptor.Type switch
         {
-            "Float" => 4,
-            "Float2" => 8,
-            "Float3" => 12,
-            "Float4" => 16,
-            "Dec3N" => 4,
-            "Color" => 4,
-            "Half2" => 4,
-            "Half4" => 8,
-            "UShort" => 2,
+            ElementDescriptorType.Float => 4,
+            ElementDescriptorType.Float2 => 8,
+            ElementDescriptorType.Float3 => 12,
+            ElementDescriptorType.Float4 => 16,
+            ElementDescriptorType.Dec3N => 4,
+            ElementDescriptorType.Color => 4,
+            ElementDescriptorType.Half2 => 4,
+            ElementDescriptorType.Half4 => 8,
+            ElementDescriptorType.UShort => 2,
+            ElementDescriptorType.UInt => 4,
             _ => throw new Exception(),
         };
     }

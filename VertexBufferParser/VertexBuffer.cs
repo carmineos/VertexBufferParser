@@ -63,6 +63,7 @@ public class VertexLayout
     }
 }
 
+
 public enum ElementDescriptorName
 {
     [XmlEnum] Index,
@@ -76,6 +77,20 @@ public enum ElementDescriptorName
     [XmlEnum] Tangents,
 }
 
+public enum ElementDescriptorType
+{
+    [XmlEnum] Float,
+    [XmlEnum] Float2,
+    [XmlEnum] Float3,
+    [XmlEnum] Float4,
+    [XmlEnum] Dec3N,
+    [XmlEnum] Color,
+    [XmlEnum] Half2,
+    [XmlEnum] Half4,
+    [XmlEnum] UShort,
+    [XmlEnum] UInt,
+}
+
 [Serializable]
 public class ElementDescriptor
 {
@@ -83,7 +98,7 @@ public class ElementDescriptor
     public ElementDescriptorName Name { get; set; }
 
     [XmlAttribute(AttributeName = "type")]
-    public string Type { get; set; }
+    public ElementDescriptorType Type { get; set; }
     
     [XmlIgnore]
     public int Offset { get; set; }

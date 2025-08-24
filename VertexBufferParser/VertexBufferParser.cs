@@ -50,14 +50,14 @@ public class VertexBufferParser
     {
         return elementDescriptor.Type switch
         {
-            "Float" => VertexElementParsers.Float,
-            "Float2" => VertexElementParsers.Float2,
-            "Float3" => VertexElementParsers.Float3,
-            "Float4" => VertexElementParsers.Float4,
-            "Dec3N" => VertexElementParsers.Dec3N,
-            "Color" => VertexElementParsers.Byte4,
-            "Half2" => VertexElementParsers.Half2,
-            "Half4" => VertexElementParsers.Half4,
+            ElementDescriptorType.Float => VertexElementParsers.Float,
+            ElementDescriptorType.Float2 => VertexElementParsers.Float2,
+            ElementDescriptorType.Float3 => VertexElementParsers.Float3,
+            ElementDescriptorType.Float4 => VertexElementParsers.Float4,
+            ElementDescriptorType.Dec3N => VertexElementParsers.Dec3N,
+            ElementDescriptorType.Color => VertexElementParsers.Byte4,
+            ElementDescriptorType.Half2 => VertexElementParsers.Half2,
+            ElementDescriptorType.Half4 => VertexElementParsers.Half4,
             _ => throw new Exception(),
         };
     }

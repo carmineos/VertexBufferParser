@@ -73,8 +73,8 @@ public class IndexBufferWriter
     {
         return elementDescriptor.Type switch
         {
-            "UShort" => new ElementWriter<ushort>(count, separator, format),
-            "UInt" => new ElementWriter<uint>(count, separator, format),
+            ElementDescriptorType.UShort => new ElementWriter<ushort>(count, separator, format),
+            ElementDescriptorType.UInt => new ElementWriter<uint>(count, separator, format),
             _ => throw new Exception(),
         };
     }
