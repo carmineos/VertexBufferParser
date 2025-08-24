@@ -154,6 +154,16 @@ void UpdatePosition(VertexBuffer buffer, Vector3 offset)
     }
 }
 
+void UpdatePositionEnumerator(VertexBuffer buffer, Vector3 offset)
+{
+    var positions = buffer.GetElementSpan<Vector3>(ElementDescriptorName.Position);
+    
+    foreach (ref var position in positions)
+    {
+        position += offset;
+    }
+}
+
 void UpdateColor0(VertexBuffer buffer, Color color)
 {
     var colors = buffer.GetElementSpan<Color>(ElementDescriptorName.Color0);

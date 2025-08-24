@@ -28,4 +28,26 @@ public readonly ref struct VertexSpan
             return _buffer.Slice(index * _vertexSize, _vertexSize);
         }
     }
+    
+    public Enumerator GetEnumerator() => new Enumerator(this);
+
+    public ref struct Enumerator
+    {
+        private readonly VertexSpan _parent;
+        private int _index;
+
+        public Enumerator(VertexSpan parent)
+        {
+            _parent = parent;
+            _index = -1;
+        }
+
+        public Span<byte> Current => _parent[_index];
+
+        public bool MoveNext()
+        {
+            _index++;
+            return _index < _parent.Length;
+        }
+    }
 }
