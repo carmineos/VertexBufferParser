@@ -85,8 +85,6 @@ void WriteVertices()
     var sb = new StringBuilder();
     using var sw = new StringWriter(sb);
 
-    var vertexStride = Unsafe.SizeOf<Vertex>();
-
     new VertexBufferWriter(vertexBuffer.VertexLayout.ElementDescriptors)
         .Write(vertexBuffer.Vertices, sw);
 
@@ -99,8 +97,6 @@ void WriteIndices()
     var sb = new StringBuilder();
     using var sw = new StringWriter(sb);
 
-    var vertexStride = Unsafe.SizeOf<Vertex>();
-
     new IndexBufferWriter(indexBuffer.ElementDescriptor)
         .Write(indexBuffer.Indices, sw);
 
@@ -110,7 +106,7 @@ void WriteIndices()
 
 void ParseVertices()
 {
-    var vertexStride = Unsafe.SizeOf<Vertex>();
+    var vertexStride = vertexBuffer.GetVertexStride();
     
     vertexBuffer.Vertices = new byte[vertexStride * vertexBuffer.VerticesCount];
     

@@ -39,6 +39,8 @@ public class VertexBuffer
     {
         return MemoryMarshal.Cast<byte, T>(Vertices);
     }
+    
+    public int GetVertexStride() => ElementDescriptorExtensions.ComputeVertexStride(VertexLayout.ElementDescriptors);
 }
 
 [Serializable]
