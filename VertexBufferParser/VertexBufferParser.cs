@@ -4,6 +4,12 @@ public class VertexBufferParser
 {
     private readonly ElementDescriptor[] _elementDescriptors;
     private readonly IFormatProvider? _formatProvider;
+    
+    public const string DefaultVerticesSeparator = "\r\n";
+    public const string DefaultElementsSeparator = "    ";
+
+    public string VerticesSeparator { get; set; } = DefaultVerticesSeparator;
+    public string ElementsSeparator { get; set; } = DefaultElementsSeparator;
 
     public VertexBufferParser(ElementDescriptor[] semanticDescriptors, IFormatProvider? formatProvider = null)
     {
@@ -16,14 +22,10 @@ public class VertexBufferParser
         var vertexCount = 0;
         var vertexStride = ElementDescriptorExtensions.ComputeVertexStride(_elementDescriptors);
         
-        var lines = verticesString.EnumerateLines();
+        var verticesSpans = new VerticesEnumerator(verticesString.Trim(), VerticesSeparator);
 
-        foreach (var line in lines)
+        foreach (var line in verticesSpans)
         {
-            // This should only happen in the first and last lines, in case of custom indentation
-            if (line.IsWhiteSpace())
-                continue;
-
             // read the vertex on each line
             var vertexSpan = vertexBuffer.Slice(vertexCount * vertexStride, vertexStride);
 
